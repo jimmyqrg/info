@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diamond Portal | Minecraft Universe</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a16;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            perspective: 1200px;
+            cursor: none;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.12s;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-ring {
+            position: fixed;
+            width: 40px;
+            height: 40px;
+            border: 2px solid rgba(0, 200, 255, 0.7);
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9998;
+            transition: all 0.2s;
+            animation: ringPulse 3s infinite alternate;
+        }
+
+        @keyframes ringPulse {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.2); opacity: 0.3; }
+        }
+
+        .diamond-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .diamond {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 200, 255, 0.08) 50%, transparent 70%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: diamondFloat 25s infinite linear;
+            filter: blur(1.5px);
+            opacity: 0.8;
+        }
+
+        .diamond:nth-child(2) {
+            width: 600px;
+            height: 600px;
+            background: linear-gradient(45deg, transparent 30%, rgba(100, 0, 255, 0.08) 50%, transparent 70%);
+            animation: diamondFloat 35s infinite linear reverse;
+            top: 15%;
+            left: 75%;
+        }
+
+        .diamond:nth-child(3) {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 200, 0.08) 50%, transparent 70%);
+            animation: diamondFloat 40s infinite linear;
+            top: 70%;
+            left: 5%;
+        }
+
+        .diamond:nth-child(4) {
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 150, 0.08) 50%, transparent 70%);
+            animation: diamondFloat 20s infinite linear reverse;
+            top: 10%;
+            left: 10%;
+        }
+
+        @keyframes diamondFloat {
+            0% { transform: rotate(0deg) translateY(0px); }
+            25% { transform: rotate(90deg) translateY(30px); }
+            50% { transform: rotate(180deg) translateY(0px); }
+            75% { transform: rotate(270deg) translateY(30px); }
+            100% { transform: rotate(360deg) translateY(0px); }
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(0, 150, 255, 0.2) 0%, 
+                rgba(0, 50, 100, 0.08) 25%, 
+                transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.4s;
+        }
+
+        .main-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+            transform-style: preserve-3d;
+        }
+
+        header {
+            text-align: center;
+            padding: 60px 0 40px;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .portal-title {
+            font-size: 5rem;
+            background: linear-gradient(90deg, #00ffff, #0080ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 40px rgba(0, 200, 255, 0.9);
+            margin-bottom: 20px;
+            letter-spacing: 4px;
+            font-weight: 900;
+            position: relative;
+            display: inline-block;
+            animation: portalGlow 4s infinite alternate;
+        }
+
+        @keyframes portalGlow {
+            0% { 
+                text-shadow: 0 0 40px rgba(0, 200, 255, 0.9), 
+                          0 0 80px rgba(0, 150, 255, 0.7),
+                          0 0 120px rgba(0, 100, 255, 0.5);
+            }
+            100% { 
+                text-shadow: 0 0 50px rgba(0, 200, 255, 1), 
+                          0 0 100px rgba(0, 150, 255, 0.8),
+                          0 0 150px rgba(0, 100, 255, 0.6),
+                          0 0 200px rgba(0, 50, 255, 0.4);
+            }
+        }
+
+        .portal-subtitle {
+            font-size: 1.5rem;
+            color: #a0d2ff;
+            margin-bottom: 40px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            line-height: 1.6;
+        }
+
+        .portal-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 400px;
+            height: 400px;
+            transform: translate(-50%, -50%) rotate(45deg);
+            background: linear-gradient(45deg, transparent, rgba(0, 200, 255, 0.07), transparent);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: -1;
+            opacity: 0.4;
+            filter: blur(3px);
+            animation: portalSpin 30s infinite linear;
+        }
+
+        @keyframes portalSpin {
+            0% { transform: translate(-50%, -50%) rotate(45deg); }
+            100% { transform: translate(-50%, -50%) rotate(405deg); }
+        }
+
+        .panels-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+            transform-style: preserve-3d;
+        }
+
+        .portal-panel {
+            background: rgba(10, 15, 40, 0.75);
+            border-radius: 25px;
+            padding: 40px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 200, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+                       inset 0 0 60px rgba(0, 100, 255, 0.1);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+            min-height: 350px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .portal-panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, transparent 30%, rgba(0, 200, 255, 0.05) 50%, transparent 70%);
+            z-index: -1;
+            transition: opacity 0.5s;
+            opacity: 0;
+        }
+
+        .portal-panel::after {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ffff, #0080ff, #00ffff);
+            border-radius: 27px;
+            z-index: -2;
+            opacity: 0;
+            transition: opacity 0.5s;
+        }
+
+        .portal-panel:hover {
+            transform: translateY(-25px) scale(1.03) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 35px 70px rgba(0, 100, 255, 0.4),
+                       0 0 100px rgba(0, 200, 255, 0.3),
+                       inset 0 0 80px rgba(0, 150, 255, 0.2);
+            border-color: rgba(0, 200, 255, 0.6);
+        }
+
+        .portal-panel:hover::before {
+            opacity: 1;
+        }
+
+        .portal-panel:hover::after {
+            opacity: 0.5;
+        }
+
+        .panel-icon {
+            font-size: 3.5rem;
+            color: #00ffff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(0, 200, 255, 0.8);
+            transition: all 0.5s;
+        }
+
+        .portal-panel:hover .panel-icon {
+            transform: scale(1.2) rotate(10deg);
+            text-shadow: 0 0 30px rgba(0, 200, 255, 1);
+        }
+
+        .panel-title {
+            font-size: 2.2rem;
+            color: #80d0ff;
+            margin-bottom: 20px;
+            transition: color 0.3s, text-shadow 0.3s;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+        }
+
+        .portal-panel:hover .panel-title {
+            color: #00ffff;
+            text-shadow: 0 0 20px rgba(0, 200, 255, 0.9);
+        }
+
+        .panel-description {
+            color: #a0d2ff;
+            font-size: 1.2rem;
+            line-height: 1.7;
+            margin-bottom: 30px;
+            flex-grow: 1;
+        }
+
+        .panel-button {
+            background: linear-gradient(90deg, #0080ff, #00aaff);
+            color: white;
+            border: none;
+            padding: 18px 30px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            transition: all 0.4s;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            position: relative;
+            overflow: hidden;
+            text-transform: uppercase;
+            width: 100%;
+            margin-top: auto;
+        }
+
+        .panel-button i {
+            margin-left: 10px;
+            transition: transform 0.4s;
+        }
+
+        .panel-button:hover {
+            background: linear-gradient(90deg, #00aaff, #00ffff);
+            box-shadow: 0 10px 25px rgba(0, 150, 255, 0.6);
+            transform: translateY(-5px);
+            letter-spacing: 2px;
+        }
+
+        .panel-button:hover i {
+            transform: translateX(8px);
+        }
+
+        .panel-button::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.8);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .panel-button:active::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00ffff;
+            animation: particleFloat 15s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 60px 0 40px;
+            margin-top: 80px;
+            color: #80c0ff;
+            font-size: 1rem;
+            letter-spacing: 2px;
+            border-top: 1px solid rgba(0, 100, 255, 0.4);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 300px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #00ffff, #0080ff, #00ffff, transparent);
+        }
+
+        .connection-lines {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .connection-line {
+            position: absolute;
+            background: linear-gradient(90deg, transparent, rgba(0, 200, 255, 0.3), transparent);
+            height: 1px;
+            transform-origin: left center;
+            animation: linePulse 3s infinite alternate;
+        }
+
+        @keyframes linePulse {
+            0% { opacity: 0.2; }
+            100% { opacity: 0.7; }
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1200px) {
+            .panels-container {
+                grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            }
+            
+            .portal-title {
+                font-size: 4rem;
+            }
+        }
+
+        @media (max-width: 1000px) {
+            .panels-container {
+                grid-template-columns: 1fr;
+                max-width: 800px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+        }
+
+        @media (max-width: 700px) {
+            .main-container {
+                padding: 20px;
+            }
+            
+            .portal-title {
+                font-size: 3rem;
+            }
+            
+            .portal-subtitle {
+                font-size: 1.2rem;
+            }
+            
+            .portal-panel {
+                padding: 30px;
+                min-height: 320px;
+            }
+            
+            .panel-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 500px) {
+            .portal-title {
+                font-size: 2.5rem;
+            }
+            
+            .portal-panel {
+                padding: 25px;
+            }
+            
+            .panel-title {
+                font-size: 1.6rem;
+            }
+            
+            .panel-description {
+                font-size: 1.1rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 20, 40, 0.9);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #0080ff, #00aaff, #0080ff);
+            border-radius: 6px;
+            border: 2px solid rgba(10, 20, 40, 0.9);
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #00aaff, #00ffff, #00aaff);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom cursor -->
+    <div class="custom-cursor"></div>
+    <div class="cursor-ring"></div>
+    
+    <!-- Diamond background elements -->
+    <div class="diamond-container">
+        <div class="diamond"></div>
+        <div class="diamond"></div>
+        <div class="diamond"></div>
+        <div class="diamond"></div>
+    </div>
+    
+    <!-- Dynamic light beam that follows mouse -->
+    <div class="light-beam" id="light-beam"></div>
+    
+    <!-- Connection lines between panels -->
+    <div class="connection-lines" id="connection-lines"></div>
+    
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="main-container">
+        <header>
+            <div class="portal-icon"></div>
+            <h1 class="portal-title">DIAMOND PORTAL</h1>
+            <p class="portal-subtitle">Navigate the Minecraft Universe through our Interactive Gateway</p>
+            <p style="color: #a0d2ff; max-width: 900px; margin: 0 auto; font-size: 1.2rem; line-height: 1.7;">
+                Welcome to the central hub of the Minecraft server universe. Each portal leads to a different dimension
+                of information, statistics, and interactive content. Hover over panels to experience the full diamond reflection effect.
+            </p>
+        </header>
+        
+        <div class="panels-container" id="panels-container">
+            <!-- Portal panels will be dynamically inserted here -->
+        </div>
+        
+        <div class="footer">
+            <p>© 2023 Diamond Portal | Minecraft Universe Navigation System</p>
+            <p style="margin-top: 15px; font-size: 0.9rem; color: #60a0ff;">Move your cursor to interact with the 3D portal effects</p>
+        </div>
+    </div>
+
+    <script>
+        // Portal panel data
+        const portalPanels = [
+            {
+                id: "server-list",
+                title: "Server Directory",
+                description: "Browse our complete list of Minecraft servers with detailed information, IP addresses, and real-time statistics. Find the perfect server for your playstyle among hundreds of options.",
+                icon: "fas fa-server",
+                color: "#00ffff",
+                pageUrl: "server/"
+            },
+            {
+                id: "coming-soon",
+                title: "Coming Soon",
+                description: "...",
+                icon: "fas fa-hourglass-half",
+                color: "#ffaa00",
+                pageUrl: ""
+            },
+        ];
+
+        // Generate portal panels
+        const panelsContainer = document.getElementById('panels-container');
+        
+        portalPanels.forEach(panel => {
+            const portalPanel = document.createElement('div');
+            portalPanel.className = 'portal-panel';
+            portalPanel.id = panel.id;
+            
+            portalPanel.innerHTML = `
+                <div>
+                    <div class="panel-icon">
+                        <i class="${panel.icon}"></i>
+                    </div>
+                    <h3 class="panel-title">${panel.title}</h3>
+                    <p class="panel-description">${panel.description}</p>
+                </div>
+                <button class="panel-button" data-page="${panel.pageUrl}">
+                    Enter Portal <i class="fas fa-arrow-right"></i>
+                </button>
+            `;
+            
+            // Set custom color for icon
+            portalPanel.querySelector('.panel-icon i').style.color = panel.color;
+            
+            panelsContainer.appendChild(portalPanel);
+        });
+
+        // Create connection lines between panels
+        function createConnectionLines() {
+            const linesContainer = document.getElementById('connection-lines');
+            const panels = document.querySelectorAll('.portal-panel');
+            
+            // Clear existing lines
+            linesContainer.innerHTML = '';
+            
+            // Create lines between some panels for visual effect
+            for (let i = 0; i < panels.length - 1; i += 2) {
+                const panel1 = panels[i];
+                const panel2 = panels[i + 1];
+                
+                const rect1 = panel1.getBoundingClientRect();
+                const rect2 = panel2.getBoundingClientRect();
+                
+                const x1 = rect1.left + rect1.width / 2;
+                const y1 = rect1.top + rect1.height / 2;
+                const x2 = rect2.left + rect2.width / 2;
+                const y2 = rect2.top + rect2.height / 2;
+                
+                // Calculate distance and angle
+                const dx = x2 - x1;
+                const dy = y2 - y1;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                const angle = Math.atan2(dy, dx) * 180 / Math.PI;
+                
+                // Create line element
+                const line = document.createElement('div');
+                line.className = 'connection-line';
+                line.style.width = `${distance}px`;
+                line.style.left = `${x1}px`;
+                line.style.top = `${y1}px`;
+                line.style.transform = `rotate(${angle}deg)`;
+                line.style.animationDelay = `${i * 0.2}s`;
+                
+                linesContainer.appendChild(line);
+            }
+        }
+
+        // Custom cursor logic
+        const cursor = document.querySelector('.custom-cursor');
+        const cursorRing = document.querySelector('.cursor-ring');
+        const lightBeam = document.getElementById('light-beam');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let ringX = 0, ringY = 0;
+        
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Update light beam position
+            lightBeam.style.setProperty('--mouse-x', `${mouseX}px`);
+            lightBeam.style.setProperty('--mouse-y', `${mouseY}px`);
+        });
+
+        // Smooth cursor movement
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.18;
+            cursorY += (mouseY - cursorY) * 0.18;
+            
+            ringX += (mouseX - ringX) * 0.12;
+            ringY += (mouseY - ringY) * 0.12;
+            
+            cursor.style.left = `${cursorX}px`;
+            cursor.style.top = `${cursorY}px`;
+            
+            cursorRing.style.left = `${ringX - 20}px`;
+            cursorRing.style.top = `${ringY - 20}px`;
+            
+            requestAnimationFrame(animateCursor);
+        }
+        
+        animateCursor();
+
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        function createParticles() {
+            for (let i = 0; i < 80; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const size = Math.random() * 6 + 2;
+                const duration = Math.random() * 25 + 15;
+                const delay = Math.random() * 30;
+                
+                particle.style.left = `${posX}vw`;
+                particle.style.top = `${posY}vh`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                // Random color
+                const colors = ['#00ffff', '#0080ff', '#aa00ff', '#00ffaa'];
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                particle.style.background = color;
+                particle.style.boxShadow = `0 0 15px ${color}`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+
+        // 3D tilt effect on portal panels
+        document.querySelectorAll('.portal-panel').forEach(panel => {
+            panel.addEventListener('mousemove', (e) => {
+                const panelRect = panel.getBoundingClientRect();
+                const panelCenterX = panelRect.left + panelRect.width / 2;
+                const panelCenterY = panelRect.top + panelRect.height / 2;
+                
+                const angleX = (e.clientY - panelCenterY) * 0.03;
+                const angleY = (panelCenterX - e.clientX) * 0.03;
+                
+                panel.style.transform = `perspective(1200px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-25px) scale(1.03)`;
+                
+                // Update cursor ring size when hovering over panel
+                cursorRing.style.width = '60px';
+                cursorRing.style.height = '60px';
+                cursorRing.style.borderWidth = '3px';
+                cursorRing.style.borderColor = 'rgba(0, 255, 255, 0.9)';
+            });
+            
+            panel.addEventListener('mouseleave', () => {
+                panel.style.transform = 'perspective(1200px) rotateX(0) rotateY(0) translateY(0) scale(1)';
+                
+                // Reset cursor ring
+                cursorRing.style.width = '40px';
+                cursorRing.style.height = '40px';
+                cursorRing.style.borderWidth = '2px';
+                cursorRing.style.borderColor = 'rgba(0, 200, 255, 0.7)';
+            });
+        });
+
+        // Panel button click functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('panel-button') || 
+                e.target.parentElement.classList.contains('panel-button')) {
+                
+                const button = e.target.classList.contains('panel-button') ? 
+                    e.target : e.target.parentElement;
+                
+                const pageUrl = button.getAttribute('data-page');
+                
+                // Create portal transition effect
+                const portalEffect = document.createElement('div');
+                portalEffect.style.position = 'fixed';
+                portalEffect.style.top = '0';
+                portalEffect.style.left = '0';
+                portalEffect.style.width = '100%';
+                portalEffect.style.height = '100%';
+                portalEffect.style.background = 'radial-gradient(circle at center, #00ffff 0%, transparent 70%)';
+                portalEffect.style.opacity = '0';
+                portalEffect.style.zIndex = '99999';
+                portalEffect.style.transition = 'opacity 0.8s';
+                document.body.appendChild(portalEffect);
+                
+                // Animate the portal effect
+                setTimeout(() => {
+                    portalEffect.style.opacity = '0.9';
+                }, 10);
+                
+                // Simulate navigation (in a real implementation, this would redirect)
+                setTimeout(() => {
+                    // Here you would normally redirect to the page
+                    // window.location.href = pageUrl;
+                    
+                    // For this demo, we'll show an alert
+                    const panelTitle = button.parentElement.querySelector('.panel-title').textContent;
+                    // alert(`Navigating to: ${panelTitle}\n\nIn a real implementation, this would take you to: ${pageUrl}`);
+                    
+                    // // Remove portal effect
+                    // portalEffect.style.opacity = '0';
+                    // setTimeout(() => {
+                    //     document.body.removeChild(portalEffect);
+                    // }, 800);
+                }, 800);
+            }
+        });
+
+        // Create connection lines on load and resize
+        window.addEventListener('load', createConnectionLines);
+        window.addEventListener('resize', createConnectionLines);
+
+        // Update connection lines on scroll
+        window.addEventListener('scroll', () => {
+            requestAnimationFrame(createConnectionLines);
+        });
+    </script>
+</body>
+</html>
