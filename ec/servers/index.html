@@ -31,10 +31,19 @@
             box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
             pointer-events: none;
             z-index: 9999;
-            transition: transform 0.1s;
-            mix-blend-mode: difference;
+            /* FIXED: Prevent cursor persistence on scroll */
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            backface-visibility: hidden;
+            /* Removed mix-blend-mode - can cause rendering issues */
+            /* mix-blend-mode: difference; */
+            /* Optimized transition */
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+            /* Ensure cursor is above everything */
+            top: 0;
+            left: 0;
         }
-
+        
         .cursor-trail {
             position: fixed;
             width: 6px;
@@ -43,7 +52,37 @@
             background: rgba(100, 200, 255, 0.5);
             pointer-events: none;
             z-index: 9998;
-            transition: opacity 0.3s;
+            /* FIXED: Better trail handling */
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translate3d(0, 0, 0);
+            will-change: opacity, transform;
+            backface-visibility: hidden;
+        }
+        
+        /* Add these classes for better performance */
+        .cursor-trail.active {
+            opacity: 0.5;
+            transition: opacity 0.1s;
+        }
+        
+        .custom-cursor.click {
+            transform: scale(0.8) translate3d(0, 0, 0);
+            background: rgba(255, 50, 50, 0.9);
+            box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+        }
+        
+        .custom-cursor.hover {
+            transform: scale(1.5) translate3d(0, 0, 0);
+            background: rgba(100, 255, 255, 0.9);
+            box-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff;
+        }
+        
+        /* Add this rule for mobile devices */
+        @media (hover: none) and (pointer: coarse) {
+            .custom-cursor, .cursor-trail {
+                display: none !important;
+            }
         }
 
         .diamond-container {
@@ -557,52 +596,166 @@
             serverListContainer.appendChild(serverCard);
         });
 
-        // Custom cursor logic
         const cursor = document.querySelector('.custom-cursor');
         const lightBeam = document.getElementById('light-beam');
         let mouseX = 0, mouseY = 0;
         let cursorX = 0, cursorY = 0;
+        let isScrolling = false;
+        let scrollTimer = null;
+        const trailPool = [];
+        const maxTrails = 15;
+        let trailIndex = 0;
+        
+        // Initialize trail pool
+        for (let i = 0; i < maxTrails; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.opacity = '0';
+            document.body.appendChild(trail);
+            trailPool.push(trail);
+        }
+        
+        // Use transform instead of left/top for better performance
+        function updateCursorPosition(x, y) {
+            cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
+        }
+        
+        // Throttled mousemove handler
+        let lastUpdate = 0;
+        const updateInterval = 1000 / 60; // 60fps
         
         document.addEventListener('mousemove', (e) => {
+            const now = performance.now();
+            if (now - lastUpdate < updateInterval) return;
+            lastUpdate = now;
+            
             mouseX = e.clientX;
             mouseY = e.clientY;
             
             // Update light beam position
-            lightBeam.style.setProperty('--mouse-x', `${mouseX}px`);
-            lightBeam.style.setProperty('--mouse-y', `${mouseY}px`);
+            if (lightBeam) {
+                lightBeam.style.setProperty('--mouse-x', `${mouseX}px`);
+                lightBeam.style.setProperty('--mouse-y', `${mouseY}px`);
+            }
             
-            // Create cursor trail
-            createCursorTrail(mouseX, mouseY);
+            // Create cursor trail (if not scrolling)
+            if (!isScrolling) {
+                createCursorTrail(mouseX, mouseY);
+            }
         });
-
+        
         function createCursorTrail(x, y) {
-            const trail = document.createElement('div');
-            trail.className = 'cursor-trail';
-            trail.style.left = `${x}px`;
-            trail.style.top = `${y}px`;
-            document.body.appendChild(trail);
+            const trail = trailPool[trailIndex];
             
-            // Remove trail after animation
+            // Reset and position trail
+            trail.style.transform = `translate3d(${x - 3}px, ${y - 3}px, 0)`;
+            trail.style.opacity = '0.5';
+            trail.style.transition = 'opacity 0.3s';
+            
+            // Fade out trail
             setTimeout(() => {
                 trail.style.opacity = '0';
-                setTimeout(() => {
-                    document.body.removeChild(trail);
-                }, 300);
+            }, 200);
+            
+            // Remove completely after fade out
+            setTimeout(() => {
+                if (trail.parentNode) {
+                    trail.style.transition = 'none';
+                }
             }, 500);
+            
+            trailIndex = (trailIndex + 1) % maxTrails;
         }
-
-        // Smooth cursor movement
+        
+        // Smooth cursor movement with scroll handling
         function animateCursor() {
             cursorX += (mouseX - cursorX) * 0.15;
             cursorY += (mouseY - cursorY) * 0.15;
             
-            cursor.style.left = `${cursorX}px`;
-            cursor.style.top = `${cursorY}px`;
+            // Use transform3d for GPU acceleration
+            updateCursorPosition(cursorX, cursorY);
             
             requestAnimationFrame(animateCursor);
         }
         
-        animateCursor();
+        // Handle scroll events to prevent trail artifacts
+        window.addEventListener('scroll', () => {
+            isScrolling = true;
+            
+            // Clear any existing timer
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);
+            }
+            
+            // Update cursor position immediately during scroll
+            updateCursorPosition(cursorX, cursorY);
+            
+            // Hide trails during scroll
+            trailPool.forEach(trail => {
+                trail.style.opacity = '0';
+            });
+            
+            // Set timer to re-enable trails after scrolling stops
+            scrollTimer = setTimeout(() => {
+                isScrolling = false;
+                scrollTimer = null;
+            }, 100);
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Force cursor position update
+            updateCursorPosition(cursorX, cursorY);
+        });
+        
+        // Handle mouse interactions
+        document.addEventListener('mousedown', () => {
+            cursor.classList.add('click');
+        });
+        
+        document.addEventListener('mouseup', () => {
+            cursor.classList.remove('click');
+        });
+        
+        // Add hover effects for interactive elements
+        document.querySelectorAll('a, button, [data-hover]').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+        
+        // Initialize cursor position
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial cursor position to center
+            mouseX = window.innerWidth / 2;
+            mouseY = window.innerHeight / 2;
+            cursorX = mouseX;
+            cursorY = mouseY;
+            updateCursorPosition(cursorX, cursorY);
+            
+            // Start animation
+            animateCursor();
+            
+            // Disable custom cursor on mobile/touch devices
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                cursor.style.display = 'none';
+                trailPool.forEach(trail => trail.style.display = 'none');
+            }
+        });
+        
+        // Performance optimization: pause updates when page is not visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Reduce activity when page is not visible
+                trailPool.forEach(trail => {
+                    trail.style.opacity = '0';
+                });
+            }
+        });
 
         // Create floating particles
         const particlesContainer = document.getElementById('particles');
