@@ -568,7 +568,7 @@
             {
                 id: "server-list",
                 title: "Server Directory",
-                description: "Browse our complete list of Minecraft servers with detailed information, IP addresses, and real-time statistics. Find the perfect server for your playstyle among hundreds of options.",
+                description: "The complete server list that works on Eaglercraft.",
                 icon: "fas fa-server",
                 color: "#00ffff",
                 pageUrl: "server/"
@@ -590,7 +590,9 @@
             const portalPanel = document.createElement('div');
             portalPanel.className = 'portal-panel';
             portalPanel.id = panel.id;
-            if (portalPanel.className === ""{
+            
+            // Check if pageUrl is empty (for "Coming Soon" panel)
+            if (panel.pageUrl === "") {
                 portalPanel.innerHTML = `
                     <div>
                         <div class="panel-icon">
@@ -600,8 +602,8 @@
                         <p class="panel-description">${panel.description}</p>
                     </div>
                 `;
-            else:
-                ortalPanel.innerHTML = `
+            } else {
+                portalPanel.innerHTML = `
                     <div>
                         <div class="panel-icon">
                             <i class="${panel.icon}"></i>
