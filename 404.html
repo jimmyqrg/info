@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 - Lost in the Portal | JimmyQrg</title>
+    <title>404 - Portal Error | JimmyQrg</title>
     <link rel="icon" href="https://student.jimmyqrg.com/info.ico">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -19,8 +19,6 @@
             color: #fff;
             overflow-x: hidden;
             min-height: 100vh;
-            perspective: 1200px;
-            cursor: none;
         }
 
         /* Custom Cursor */
@@ -36,7 +34,7 @@
             transform: translate3d(0, 0, 0);
             will-change: transform;
             backface-visibility: hidden;
-            transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+            transition: transform 0.15s;
             top: 0;
             left: 0;
         }
@@ -50,22 +48,22 @@
             pointer-events: none;
             z-index: 9998;
             opacity: 0;
-            transition: opacity 0.3s, transform 0.3s;
+            transition: opacity 0.3s;
             transform: translate3d(0, 0, 0);
             will-change: opacity, transform;
             backface-visibility: hidden;
         }
 
         .custom-cursor.click {
-            transform: scale(0.5) translate3d(0, 0, 0);
-            background: rgba(255, 100, 100, 0.9);
-            box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+            transform: scale(0.8);
+            background: rgba(100, 150, 255, 0.9);
+            box-shadow: 0 0 20px #0066ff, 0 0 40px #0066ff;
         }
 
         .custom-cursor.hover {
-            transform: scale(1.5) translate3d(0, 0, 0);
+            transform: scale(1.3);
             background: rgba(100, 255, 255, 0.8);
-            box-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00;
+            box-shadow: 0 0 20px #00ffff, 0 0 40px #00ffff;
         }
 
         @media (hover: none) and (pointer: coarse) {
@@ -102,7 +100,7 @@
         .diamond:nth-child(2) {
             width: 600px;
             height: 600px;
-            background: linear-gradient(45deg, transparent 30%, rgba(100, 0, 255, 0.08) 50%, transparent 70%);
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 100, 255, 0.08) 50%, transparent 70%);
             animation: diamondFloat 35s infinite linear reverse;
             top: 15%;
             left: 75%;
@@ -111,7 +109,7 @@
         .diamond:nth-child(3) {
             width: 500px;
             height: 500px;
-            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 200, 0.08) 50%, transparent 70%);
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 150, 255, 0.08) 50%, transparent 70%);
             animation: diamondFloat 40s infinite linear;
             top: 70%;
             left: 5%;
@@ -120,7 +118,7 @@
         .diamond:nth-child(4) {
             width: 300px;
             height: 300px;
-            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 150, 0.08) 50%, transparent 70%);
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 255, 200, 0.08) 50%, transparent 70%);
             animation: diamondFloat 20s infinite linear reverse;
             top: 10%;
             left: 10%;
@@ -140,8 +138,8 @@
             width: 100%;
             height: 100%;
             background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
-                rgba(0, 150, 255, 0.2) 0%, 
-                rgba(0, 50, 100, 0.08) 25%, 
+                rgba(0, 150, 255, 0.15) 0%, 
+                rgba(0, 50, 150, 0.06) 25%, 
                 transparent 70%);
             pointer-events: none;
             z-index: -1;
@@ -155,7 +153,6 @@
             padding: 30px;
             position: relative;
             z-index: 1;
-            transform-style: preserve-3d;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -168,7 +165,6 @@
             text-align: center;
             padding: 40px 0;
             position: relative;
-            transform-style: preserve-3d;
             margin-bottom: 60px;
         }
 
@@ -176,13 +172,13 @@
             position: absolute;
             top: 50%;
             left: 50%;
-            width: 600px;
-            height: 600px;
+            width: 500px;
+            height: 500px;
             transform: translate(-50%, -50%) rotate(45deg);
-            background: linear-gradient(45deg, transparent, rgba(255, 0, 100, 0.1), rgba(0, 200, 255, 0.1), transparent);
+            background: linear-gradient(45deg, transparent, rgba(0, 200, 255, 0.07), transparent);
             clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
             z-index: -1;
-            opacity: 0.5;
+            opacity: 0.4;
             filter: blur(3px);
             animation: portalSpin 30s infinite linear;
         }
@@ -193,56 +189,52 @@
         }
 
         .error-code {
-            font-size: 20rem;
-            background: linear-gradient(90deg, #ff0066, #ff6600, #ffff00, #00ff66, #0066ff, #6600ff);
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-            text-shadow: 0 0 60px rgba(255, 0, 100, 0.7);
-            margin-bottom: -60px;
-            letter-spacing: 20px;
-            font-weight: 900;
-            position: relative;
-            display: inline-block;
-            animation: errorGlow 3s infinite alternate;
-        }
-
-        @keyframes errorGlow {
-            0% { 
-                text-shadow: 0 0 60px rgba(255, 0, 100, 0.7), 
-                          0 0 120px rgba(255, 102, 0, 0.5),
-                          0 0 180px rgba(255, 255, 0, 0.3);
-            }
-            100% { 
-                text-shadow: 0 0 80px rgba(255, 0, 100, 0.9), 
-                          0 0 160px rgba(255, 102, 0, 0.7),
-                          0 0 240px rgba(255, 255, 0, 0.5),
-                          0 0 320px rgba(0, 255, 102, 0.3);
-            }
-        }
-
-        .error-title {
-            font-size: 4rem;
+            font-size: 15rem;
             background: linear-gradient(90deg, #00ffff, #0080ff, #00ffff);
             -webkit-background-clip: text;
             background-clip: text;
             color: transparent;
             text-shadow: 0 0 40px rgba(0, 200, 255, 0.9);
-            margin-bottom: 30px;
-            letter-spacing: 8px;
+            margin-bottom: -40px;
+            letter-spacing: 15px;
             font-weight: 900;
             position: relative;
             display: inline-block;
+            animation: portalGlow 4s infinite alternate;
+        }
+
+        @keyframes portalGlow {
+            0% { 
+                text-shadow: 0 0 40px rgba(0, 200, 255, 0.9), 
+                          0 0 80px rgba(0, 150, 255, 0.7);
+            }
+            100% { 
+                text-shadow: 0 0 50px rgba(0, 200, 255, 1), 
+                          0 0 100px rgba(0, 150, 255, 0.8),
+                          0 0 150px rgba(0, 100, 255, 0.6);
+            }
+        }
+
+        .error-title {
+            font-size: 3.5rem;
+            background: linear-gradient(90deg, #80d0ff, #0080ff, #80d0ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(0, 180, 255, 0.8);
+            margin-bottom: 30px;
+            letter-spacing: 6px;
+            font-weight: 700;
         }
 
         .error-subtitle {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             color: #a0d2ff;
             max-width: 800px;
             margin: 0 auto 40px;
-            letter-spacing: 3px;
+            letter-spacing: 2px;
             line-height: 1.6;
-            text-transform: uppercase;
+            font-weight: 300;
         }
 
         /* Error Message Panel */
@@ -250,15 +242,13 @@
             background: rgba(10, 15, 40, 0.85);
             border-radius: 25px;
             padding: 50px;
-            backdrop-filter: blur(20px);
-            border: 2px solid rgba(255, 0, 100, 0.4);
-            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.7),
-                       inset 0 0 80px rgba(255, 0, 100, 0.1),
-                       0 0 100px rgba(255, 0, 100, 0.2);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(0, 200, 255, 0.25);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+                       inset 0 0 60px rgba(0, 100, 255, 0.1);
+            transition: all 0.4s ease;
             position: relative;
             overflow: hidden;
-            transform-style: preserve-3d;
             max-width: 900px;
             width: 100%;
             margin-bottom: 60px;
@@ -271,7 +261,7 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background: linear-gradient(135deg, transparent 30%, rgba(255, 0, 100, 0.1) 50%, transparent 70%);
+            background: linear-gradient(135deg, transparent 30%, rgba(0, 200, 255, 0.05) 50%, transparent 70%);
             z-index: -1;
             transition: opacity 0.5s;
             opacity: 0;
@@ -284,25 +274,19 @@
             left: -2px;
             right: -2px;
             bottom: -2px;
-            background: linear-gradient(45deg, #ff0066, #ff6600, #ffff00, #00ff66, #0066ff, #6600ff);
+            background: linear-gradient(45deg, #00ffff, #0080ff, #00ffff);
             border-radius: 27px;
             z-index: -2;
             opacity: 0;
             transition: opacity 0.5s;
-            animation: rainbowBorder 8s infinite linear;
-        }
-
-        @keyframes rainbowBorder {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
         }
 
         .error-panel:hover {
-            transform: translateY(-25px) scale(1.03) rotateX(5deg) rotateY(5deg);
-            box-shadow: 0 50px 100px rgba(255, 0, 100, 0.5),
-                       0 0 150px rgba(255, 0, 100, 0.4),
-                       inset 0 0 120px rgba(255, 0, 100, 0.2);
-            border-color: rgba(255, 0, 100, 0.8);
+            transform: translateY(-15px);
+            box-shadow: 0 30px 60px rgba(0, 100, 255, 0.3),
+                       0 0 100px rgba(0, 200, 255, 0.2),
+                       inset 0 0 80px rgba(0, 150, 255, 0.15);
+            border-color: rgba(0, 200, 255, 0.4);
         }
 
         .error-panel:hover::before {
@@ -310,46 +294,40 @@
         }
 
         .error-panel:hover::after {
-            opacity: 0.6;
+            opacity: 0.3;
         }
 
         .error-icon {
-            font-size: 5rem;
-            color: #ff0066;
-            margin-bottom: 30px;
-            text-shadow: 0 0 40px rgba(255, 0, 100, 0.9);
-            transition: all 0.5s;
+            font-size: 4rem;
+            color: #00aaff;
+            margin-bottom: 25px;
+            text-shadow: 0 0 30px rgba(0, 170, 255, 0.8);
+            transition: all 0.4s;
             text-align: center;
         }
 
         .error-panel:hover .error-icon {
-            transform: scale(1.3) rotate(15deg);
-            text-shadow: 0 0 60px rgba(255, 0, 100, 1);
-            animation: iconPulse 2s infinite;
-        }
-
-        @keyframes iconPulse {
-            0%, 100% { transform: scale(1.3) rotate(15deg); }
-            50% { transform: scale(1.5) rotate(15deg); }
+            transform: scale(1.2);
+            text-shadow: 0 0 40px rgba(0, 170, 255, 1);
         }
 
         .error-message {
             color: #a0d2ff;
-            font-size: 1.4rem;
-            line-height: 1.8;
-            margin-bottom: 40px;
+            font-size: 1.3rem;
+            line-height: 1.7;
+            margin-bottom: 25px;
             text-align: center;
         }
 
         .error-message strong {
-            color: #00ffff;
-            text-shadow: 0 0 10px rgba(0, 200, 255, 0.7);
+            color: #80d0ff;
+            text-shadow: 0 0 10px rgba(128, 208, 255, 0.7);
         }
 
         /* Navigation Buttons */
         .navigation-buttons {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 30px;
             width: 100%;
             max-width: 900px;
@@ -362,89 +340,52 @@
             padding: 25px 40px;
             border-radius: 20px;
             cursor: pointer;
-            font-weight: 700;
-            letter-spacing: 2px;
-            transition: all 0.4s;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            transition: all 0.3s ease;
             display: flex;
             align-items: center;
             justify-content: center;
             font-size: 1.2rem;
             position: relative;
             overflow: hidden;
-            text-transform: uppercase;
             min-height: 100px;
-            transform-style: preserve-3d;
             backdrop-filter: blur(10px);
-            border: 2px solid rgba(0, 200, 255, 0.3);
-            box-shadow: 0 15px 35px rgba(0, 100, 255, 0.3);
+            border: 2px solid rgba(0, 180, 255, 0.3);
+            box-shadow: 0 15px 35px rgba(0, 100, 255, 0.25);
         }
 
         .nav-button:nth-child(2) {
-            background: linear-gradient(90deg, #ff6600, #ffaa00);
-            border-color: rgba(255, 102, 0, 0.3);
-            box-shadow: 0 15px 35px rgba(255, 102, 0, 0.3);
+            background: linear-gradient(90deg, #0066cc, #0080ff);
         }
 
         .nav-button:nth-child(3) {
-            background: linear-gradient(90deg, #6600ff, #aa00ff);
-            border-color: rgba(102, 0, 255, 0.3);
-            box-shadow: 0 15px 35px rgba(102, 0, 255, 0.3);
+            background: linear-gradient(90deg, #004499, #0066cc);
         }
 
         .nav-button i {
             margin-right: 15px;
             font-size: 1.8rem;
-            transition: transform 0.4s;
+            transition: transform 0.3s;
         }
 
         .nav-button:hover {
-            transform: translateY(-15px) translateZ(50px) scale(1.05);
-            letter-spacing: 3px;
-            box-shadow: 0 25px 50px rgba(0, 150, 255, 0.5),
-                       0 0 80px rgba(0, 200, 255, 0.4);
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 150, 255, 0.4),
+                       0 0 60px rgba(0, 200, 255, 0.3);
+            background: linear-gradient(90deg, #00aaff, #00ccff);
         }
 
         .nav-button:nth-child(2):hover {
-            box-shadow: 0 25px 50px rgba(255, 102, 0, 0.5),
-                       0 0 80px rgba(255, 153, 0, 0.4);
+            background: linear-gradient(90deg, #0080ff, #00aaff);
         }
 
         .nav-button:nth-child(3):hover {
-            box-shadow: 0 25px 50px rgba(102, 0, 255, 0.5),
-                       0 0 80px rgba(153, 0, 255, 0.4);
+            background: linear-gradient(90deg, #0066cc, #0080ff);
         }
 
         .nav-button:hover i {
-            transform: rotate(15deg) scale(1.2);
-        }
-
-        .nav-button::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.8);
-            opacity: 0;
-            border-radius: 100%;
-            transform: scale(1, 1) translate(-50%);
-            transform-origin: 50% 50%;
-        }
-
-        .nav-button:active::after {
-            animation: ripple 1s ease-out;
-        }
-
-        @keyframes ripple {
-            0% {
-                transform: scale(0, 0);
-                opacity: 0.7;
-            }
-            100% {
-                transform: scale(50, 50);
-                opacity: 0;
-            }
+            transform: translateX(8px);
         }
 
         /* Particle Effects */
@@ -460,11 +401,11 @@
 
         .particle {
             position: absolute;
-            width: 5px;
-            height: 5px;
-            background: rgba(255, 255, 255, 0.9);
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
             border-radius: 50%;
-            box-shadow: 0 0 15px #00ffff;
+            box-shadow: 0 0 12px #00ffff;
             animation: particleFloat 20s infinite linear;
         }
 
@@ -483,7 +424,7 @@
             color: #80c0ff;
             font-size: 1rem;
             letter-spacing: 2px;
-            border-top: 1px solid rgba(0, 100, 255, 0.4);
+            border-top: 1px solid rgba(0, 100, 255, 0.3);
             position: relative;
             width: 100%;
         }
@@ -499,22 +440,22 @@
             background: linear-gradient(90deg, transparent, #00ffff, #0080ff, #00ffff, transparent);
         }
 
-        /* Broken Link Animation */
-        .broken-link {
+        /* Lost Path Animation */
+        .lost-path {
             position: absolute;
-            font-size: 2rem;
-            color: #ff0066;
+            font-size: 1.5rem;
+            color: #00aaff;
             opacity: 0;
-            animation: brokenLink 3s infinite;
+            animation: lostPath 4s infinite;
         }
 
-        @keyframes brokenLink {
+        @keyframes lostPath {
             0%, 100% {
                 transform: translate(0, 0) rotate(0deg);
                 opacity: 0;
             }
             50% {
-                opacity: 1;
+                opacity: 0.7;
             }
         }
 
@@ -531,41 +472,41 @@
 
         .connection-line {
             position: absolute;
-            background: linear-gradient(90deg, transparent, rgba(255, 0, 100, 0.3), transparent);
+            background: linear-gradient(90deg, transparent, rgba(0, 180, 255, 0.2), transparent);
             height: 1px;
             transform-origin: left center;
             animation: linePulse 3s infinite alternate;
         }
 
         @keyframes linePulse {
-            0% { opacity: 0.2; }
-            100% { opacity: 0.7; }
+            0% { opacity: 0.1; }
+            100% { opacity: 0.4; }
         }
 
         /* Responsive Design */
         @media (max-width: 1200px) {
             .error-code {
-                font-size: 15rem;
+                font-size: 12rem;
             }
             
             .error-title {
-                font-size: 3rem;
+                font-size: 2.8rem;
             }
         }
 
         @media (max-width: 900px) {
             .error-code {
-                font-size: 10rem;
+                font-size: 9rem;
                 letter-spacing: 10px;
-                margin-bottom: -40px;
+                margin-bottom: -30px;
             }
             
             .error-title {
-                font-size: 2.5rem;
+                font-size: 2.2rem;
             }
             
             .error-subtitle {
-                font-size: 1.4rem;
+                font-size: 1.3rem;
             }
             
             .navigation-buttons {
@@ -581,7 +522,7 @@
             
             .error-code {
                 font-size: 6rem;
-                letter-spacing: 5px;
+                letter-spacing: 6px;
                 margin-bottom: -20px;
             }
             
@@ -603,13 +544,14 @@
             
             .nav-button {
                 padding: 20px;
-                font-size: 1rem;
+                font-size: 1.1rem;
+                min-height: 80px;
             }
         }
 
         /* Scrollbar Styling */
         ::-webkit-scrollbar {
-            width: 12px;
+            width: 10px;
         }
 
         ::-webkit-scrollbar-track {
@@ -617,13 +559,13 @@
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #ff0066, #ff6600, #ffff00);
-            border-radius: 6px;
+            background: linear-gradient(180deg, #0080ff, #00aaff);
+            border-radius: 5px;
             border: 2px solid rgba(10, 20, 40, 0.9);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(180deg, #ff3366, #ff9933, #ffff33);
+            background: linear-gradient(180deg, #00aaff, #00ccff);
         }
     </style>
 </head>
@@ -653,22 +595,17 @@
         <header class="error-header">
             <div class="error-portal"></div>
             <div class="error-code">404</div>
-            <h1 class="error-title">PORTAL ERROR DETECTED</h1>
-            <p class="error-subtitle">The digital gateway you seek has drifted into the void</p>
+            <h1 class="error-title">Page Not Found</h1>
+            <p class="error-subtitle">Please check if you did any typos</p>
         </header>
         
         <!-- Error Message Panel -->
         <div class="error-panel">
             <div class="error-icon">
-                <i class="fas fa-exclamation-triangle"></i>
+                <i class="fas fa-satellite-dish"></i>
             </div>
             <p class="error-message">
-                Our quantum scanners indicate that the page coordinates you entered have become<br>
-                <strong>temporarily unstable</strong> or were <strong>never registered</strong> in our dimensional database.
-            </p>
-            <p class="error-message">
-                Possible causes: <strong>Incorrect portal coordinates</strong> • <strong>Dimensional rift interference</strong><br>
-                • <strong>Temporal displacement</strong> • <strong>Digital entropy decay</strong>
+                You'll see this screen when you opened something that's not uploaded yet or doesn't exist at all.
             </p>
         </div>
         
@@ -678,16 +615,13 @@
                 <i class="fas fa-home"></i> Return to Home Portal
             </button>
             <button class="nav-button" id="backBtn">
-                <i class="fas fa-history"></i> Reverse Temporal Flow
-            </button>
-            <button class="nav-button" id="searchBtn">
-                <i class="fas fa-search"></i> Scan Dimensional Database
+                <i class="fas fa-arrow-left"></i> Navigate Back
             </button>
         </div>
         
         <!-- Footer -->
         <div class="footer">
-            <p>© 2025 JimmyQrg Portal System • Error Code: 404-QUANTUM-DISPLACEMENT</p>
+            <p>© 2025 JimmyQrg Info</p>
         </div>
     </div>
 
@@ -700,7 +634,7 @@
         let isScrolling = false;
         let scrollTimer = null;
         const trailPool = [];
-        const maxTrails = 15;
+        const maxTrails = 12;
         let trailIndex = 0;
 
         // Initialize trail pool
@@ -712,12 +646,11 @@
             trailPool.push(trail);
         }
 
-        // Use transform for better performance
         function updateCursorPosition(x, y) {
             cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
         }
 
-        // Throttled mousemove handler (60fps)
+        // Throttled mousemove handler
         let lastUpdate = 0;
         const updateInterval = 1000 / 60;
 
@@ -744,23 +677,21 @@
         function createCursorTrail(x, y) {
             const trail = trailPool[trailIndex];
             
-            // Reset and position trail
             trail.style.transform = `translate3d(${x - 3}px, ${y - 3}px, 0)`;
-            trail.style.opacity = '0.5';
-            trail.style.transition = 'opacity 0.3s';
+            trail.style.opacity = '0.4';
+            trail.style.transition = 'opacity 0.4s';
             
-            // Fade out trail
             setTimeout(() => {
                 trail.style.opacity = '0';
-            }, 200);
+            }, 300);
             
             trailIndex = (trailIndex + 1) % maxTrails;
         }
 
         // Smooth cursor movement
         function animateCursor() {
-            cursorX += (mouseX - cursorX) * 0.15;
-            cursorY += (mouseY - cursorY) * 0.15;
+            cursorX += (mouseX - cursorX) * 0.12;
+            cursorY += (mouseY - cursorY) * 0.12;
             
             updateCursorPosition(cursorX, cursorY);
             requestAnimationFrame(animateCursor);
@@ -776,7 +707,6 @@
             
             updateCursorPosition(cursorX, cursorY);
             
-            // Hide trails during scroll
             trailPool.forEach(trail => {
                 trail.style.opacity = '0';
             });
@@ -787,7 +717,6 @@
             }, 100);
         });
 
-        // Handle window resize
         window.addEventListener('resize', () => {
             updateCursorPosition(cursorX, cursorY);
         });
@@ -833,13 +762,13 @@
         // Create floating particles
         const particlesContainer = document.getElementById('particles');
         function createParticles() {
-            for (let i = 0; i < 80; i++) {
+            for (let i = 0; i < 60; i++) {
                 const particle = document.createElement('div');
                 particle.className = 'particle';
                 
                 const posX = Math.random() * 100;
-                const posY = Math.random() * window.innerHeight;
-                const size = Math.random() * 6 + 2;
+                const posY = Math.random() * 100;
+                const size = Math.random() * 4 + 2;
                 const duration = Math.random() * 20 + 15;
                 const delay = Math.random() * 30;
                 
@@ -850,10 +779,10 @@
                 particle.style.animationDuration = `${duration}s`;
                 particle.style.animationDelay = `${delay}s`;
                 
-                const colors = ['#00ffff', '#ff0066', '#0080ff', '#ff6600', '#aa00ff'];
+                const colors = ['#00ffff', '#0080ff', '#00aaff', '#80d0ff'];
                 const color = colors[Math.floor(Math.random() * colors.length)];
                 particle.style.background = color;
-                particle.style.boxShadow = `0 0 15px ${color}`;
+                particle.style.boxShadow = `0 0 12px ${color}`;
                 
                 particlesContainer.appendChild(particle);
             }
@@ -861,33 +790,33 @@
         
         createParticles();
 
-        // Create broken link effects
-        function createBrokenLinks() {
-            const brokenLinks = ['fa-link', 'fa-chain-broken', 'fa-unlink', 'fa-external-link-alt'];
+        // Create lost path indicators
+        function createLostPaths() {
+            const lostIcons = ['fa-route', 'fa-map-marker-alt', 'fa-location-arrow', 'fa-satellite'];
             
-            for (let i = 0; i < 15; i++) {
-                const link = document.createElement('i');
-                link.className = `fas ${brokenLinks[Math.floor(Math.random() * brokenLinks.length)]} broken-link`;
+            for (let i = 0; i < 12; i++) {
+                const path = document.createElement('i');
+                path.className = `fas ${lostIcons[Math.floor(Math.random() * lostIcons.length)]} lost-path`;
                 
-                const size = Math.random() * 40 + 20;
+                const size = Math.random() * 30 + 20;
                 const x = Math.random() * 100;
                 const y = Math.random() * 100;
-                const delay = Math.random() * 10;
-                const duration = Math.random() * 5 + 3;
+                const delay = Math.random() * 8;
+                const duration = Math.random() * 4 + 3;
                 
-                link.style.fontSize = `${size}px`;
-                link.style.left = `${x}vw`;
-                link.style.top = `${y}vh`;
-                link.style.animationDelay = `${delay}s`;
-                link.style.animationDuration = `${duration}s`;
+                path.style.fontSize = `${size}px`;
+                path.style.left = `${x}vw`;
+                path.style.top = `${y}vh`;
+                path.style.animationDelay = `${delay}s`;
+                path.style.animationDuration = `${duration}s`;
                 
-                document.body.appendChild(link);
+                document.body.appendChild(path);
             }
         }
         
-        createBrokenLinks();
+        createLostPaths();
 
-        // Create connection lines
+        // Create subtle connection lines
         function createConnectionLines() {
             const linesContainer = document.getElementById('connection-lines');
             const elements = document.querySelectorAll('.nav-button, .error-panel');
@@ -911,7 +840,7 @@
                     const dy = y2 - y1;
                     const distance = Math.sqrt(dx * dx + dy * dy);
                     
-                    if (distance < 800) {
+                    if (distance < 700) {
                         const angle = Math.atan2(dy, dx) * 180 / Math.PI;
                         
                         const line = document.createElement('div');
@@ -920,35 +849,13 @@
                         line.style.left = `${x1}px`;
                         line.style.top = `${y1}px`;
                         line.style.transform = `rotate(${angle}deg)`;
-                        line.style.animationDelay = `${(i + j) * 0.1}s`;
+                        line.style.opacity = '0.1';
                         
                         linesContainer.appendChild(line);
                     }
                 }
             }
         }
-
-        // 3D hover effects
-        document.querySelectorAll('.nav-button, .error-panel').forEach(element => {
-            element.addEventListener('mousemove', (e) => {
-                const rect = element.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                const angleX = (e.clientY - centerY) * 0.03;
-                const angleY = (centerX - e.clientX) * 0.03;
-                
-                element.style.transform = element.style.transform.replace(/rotateX\([^)]*\)/, '') +
-                                         element.style.transform.replace(/rotateY\([^)]*\)/, '') +
-                                         `rotateX(${angleX}deg) rotateY(${angleY}deg)`;
-            });
-            
-            element.addEventListener('mouseleave', () => {
-                element.style.transform = element.style.transform
-                    .replace(/rotateX\([^)]*\)/, '')
-                    .replace(/rotateY\([^)]*\)/, '');
-            });
-        });
 
         // Button functionality
         document.getElementById('homeBtn').addEventListener('click', () => {
@@ -963,15 +870,6 @@
             });
         });
 
-        document.getElementById('searchBtn').addEventListener('click', () => {
-            const searchTerm = prompt('Enter search coordinates:');
-            if (searchTerm) {
-                createPortalEffect(() => {
-                    alert(`Scanning dimensional database for: ${searchTerm}\n\nIn a real implementation, this would search the site.`);
-                });
-            }
-        });
-
         function createPortalEffect(callback) {
             const portalEffect = document.createElement('div');
             portalEffect.style.position = 'fixed';
@@ -979,14 +877,14 @@
             portalEffect.style.left = '0';
             portalEffect.style.width = '100%';
             portalEffect.style.height = '100%';
-            portalEffect.style.background = 'radial-gradient(circle at center, #00ffff 0%, transparent 70%)';
+            portalEffect.style.background = 'radial-gradient(circle at center, rgba(0, 170, 255, 0.3) 0%, transparent 70%)';
             portalEffect.style.opacity = '0';
             portalEffect.style.zIndex = '99999';
-            portalEffect.style.transition = 'opacity 1s';
+            portalEffect.style.transition = 'opacity 0.8s ease';
             document.body.appendChild(portalEffect);
             
             setTimeout(() => {
-                portalEffect.style.opacity = '1';
+                portalEffect.style.opacity = '0.7';
             }, 10);
             
             setTimeout(() => {
@@ -994,11 +892,11 @@
                 portalEffect.style.opacity = '0';
                 setTimeout(() => {
                     document.body.removeChild(portalEffect);
-                }, 1000);
-            }, 1000);
+                }, 800);
+            }, 800);
         }
 
-        // Update connection lines on load and resize
+        // Update connection lines
         window.addEventListener('load', createConnectionLines);
         window.addEventListener('resize', createConnectionLines);
         window.addEventListener('scroll', () => {
@@ -1012,6 +910,18 @@
                     trail.style.opacity = '0';
                 });
             }
+        });
+
+        // Add subtle interactive glow to elements
+        document.querySelectorAll('.nav-button, .error-panel').forEach(element => {
+            element.addEventListener('mousemove', (e) => {
+                const rect = element.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                element.style.setProperty('--mouse-x', `${x}%`);
+                element.style.setProperty('--mouse-y', `${y}%`);
+            });
         });
     </script>
 </body>
