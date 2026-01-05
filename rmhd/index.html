@@ -1,0 +1,777 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rammerhead Browser List | JimmyQrg Infos</title>
+    <link rel="icon" href="https://learn.jimmyqrg.com/info.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #0a0a16;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            perspective: 1000px;
+        }
+
+        .custom-cursor {
+            position: fixed;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.7);
+            box-shadow: 0 0 15px #00ffff, 0 0 30px #00ffff;
+            pointer-events: none;
+            z-index: 9999;
+            /* FIXED: Prevent cursor persistence on scroll */
+            transform: translate3d(0, 0, 0);
+            will-change: transform;
+            backface-visibility: hidden;
+            /* Removed mix-blend-mode - can cause rendering issues */
+            /* mix-blend-mode: difference; */
+            /* Optimized transition */
+            transition: transform 0.15s cubic-bezier(0.2, 0, 0.2, 1);
+            /* Ensure cursor is above everything */
+            top: 0;
+            left: 0;
+        }
+        
+        .cursor-trail {
+            position: fixed;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: rgba(100, 200, 255, 0.5);
+            pointer-events: none;
+            z-index: 9998;
+            /* FIXED: Better trail handling */
+            opacity: 0;
+            transition: opacity 0.3s, transform 0.3s;
+            transform: translate3d(0, 0, 0);
+            will-change: opacity, transform;
+            backface-visibility: hidden;
+        }
+        
+        /* Add these classes for better performance */
+        .cursor-trail.active {
+            opacity: 0.5;
+            transition: opacity 0.1s;
+        }
+        
+        .custom-cursor.click {
+            transform: scale(0.8) translate3d(0, 0, 0);
+            background: rgba(255, 50, 50, 0.9);
+            box-shadow: 0 0 20px #ff0000, 0 0 40px #ff0000;
+        }
+        
+        .custom-cursor.hover {
+            transform: scale(1.5) translate3d(0, 0, 0);
+            background: rgba(100, 255, 255, 0.9);
+            box-shadow: 0 0 25px #00ffff, 0 0 50px #00ffff;
+        }
+        
+        /* Add this rule for mobile devices */
+        @media (hover: none) and (pointer: coarse) {
+            .custom-cursor, .cursor-trail {
+                display: none !important;
+            }
+        }
+
+        .diamond-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .diamond {
+            position: absolute;
+            width: 300px;
+            height: 300px;
+            background: linear-gradient(45deg, transparent 30%, rgba(0, 200, 255, 0.1) 50%, transparent 70%);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            animation: diamondFloat 20s infinite linear;
+            filter: blur(1px);
+            opacity: 0.7;
+        }
+
+        .diamond:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            background: linear-gradient(45deg, transparent 30%, rgba(100, 0, 255, 0.1) 50%, transparent 70%);
+            animation: diamondFloat 25s infinite linear reverse;
+            top: 20%;
+            left: 70%;
+        }
+
+        .diamond:nth-child(3) {
+            width: 400px;
+            height: 400px;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 0, 200, 0.1) 50%, transparent 70%);
+            animation: diamondFloat 30s infinite linear;
+            top: 60%;
+            left: 10%;
+        }
+
+        @keyframes diamondFloat {
+            0% { transform: rotate(0deg) translateY(0px); }
+            25% { transform: rotate(90deg) translateY(20px); }
+            50% { transform: rotate(180deg) translateY(0px); }
+            75% { transform: rotate(270deg) translateY(20px); }
+            100% { transform: rotate(360deg) translateY(0px); }
+        }
+
+        .light-beam {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+                rgba(0, 150, 255, 0.15) 0%, 
+                rgba(0, 50, 100, 0.05) 30%, 
+                transparent 70%);
+            pointer-events: none;
+            z-index: -1;
+            transition: background 0.3s;
+        }
+
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        header {
+            text-align: center;
+            padding: 40px 0;
+            position: relative;
+            transform-style: preserve-3d;
+        }
+
+        .header-title {
+            font-size: 4.5rem;
+            background: linear-gradient(90deg, #00ffff, #0080ff, #00ffff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            text-shadow: 0 0 30px rgba(0, 200, 255, 0.7);
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            font-weight: 800;
+            position: relative;
+            display: inline-block;
+            animation: titleGlow 3s infinite alternate;
+        }
+
+        @keyframes titleGlow {
+            0% { text-shadow: 0 0 30px rgba(0, 200, 255, 0.7), 0 0 60px rgba(0, 150, 255, 0.5); }
+            100% { text-shadow: 0 0 40px rgba(0, 200, 255, 0.9), 0 0 80px rgba(0, 150, 255, 0.7), 0 0 100px rgba(0, 100, 255, 0.5); }
+        }
+
+        .header-subtitle {
+            font-size: 1.3rem;
+            color: #a0d2ff;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .diamond-icon {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 300px;
+            height: 300px;
+            transform: translate(-50%, -50%) rotate(45deg);
+            background: linear-gradient(45deg, transparent, rgba(0, 200, 255, 0.05), transparent);
+            clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+            z-index: -1;
+            opacity: 0.3;
+            filter: blur(2px);
+        }
+
+        .server-list-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(450px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+            transform-style: preserve-3d;
+        }
+
+        .server-card {
+            background: rgba(10, 15, 40, 0.7);
+            border-radius: 20px;
+            padding: 25px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(0, 200, 255, 0.2);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            transform-style: preserve-3d;
+        }
+
+        .server-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #00ffff, #0080ff, #00ffff);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.5s ease;
+        }
+
+        .server-card:hover {
+            transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+            box-shadow: 0 25px 50px rgba(0, 100, 255, 0.3),
+                        0 0 80px rgba(0, 200, 255, 0.2),
+                        inset 0 0 60px rgba(0, 150, 255, 0.1);
+            border-color: rgba(0, 200, 255, 0.5);
+        }
+
+        .server-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .server-card:hover .server-name {
+            color: #00ffff;
+            text-shadow: 0 0 15px rgba(0, 200, 255, 0.8);
+        }
+
+        .server-name {
+            font-size: 1.8rem;
+            color: #80d0ff;
+            margin-bottom: 15px;
+            transition: color 0.3s, text-shadow 0.3s;
+            font-weight: 700;
+            letter-spacing: 1px;
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .server-name i {
+            margin-right: 15px;
+            color: #00ffff;
+            font-size: 1.5rem;
+        }
+
+        .server-ip {
+            background: rgba(0, 30, 60, 0.7);
+            padding: 15px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border-left: 4px solid #00aaff;
+            font-family: 'Courier New', monospace;
+            font-size: 1.1rem;
+            word-break: break-all;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .server-ip:hover {
+            background: rgba(0, 40, 80, 0.9);
+            border-left-color: #00ffff;
+            box-shadow: 0 5px 15px rgba(0, 100, 255, 0.3);
+        }
+
+        .server-ip::before {
+            content: 'IP';
+            position: absolute;
+            top: 0;
+            right: 0;
+            background: rgba(0, 100, 255, 0.3);
+            padding: 5px 12px;
+            border-radius: 0 0 0 8px;
+            font-size: 0.8rem;
+            color: #a0e0ff;
+        }
+
+        .copy-btn {
+            background: linear-gradient(90deg, #0080ff, #00aaff);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: all 0.3s;
+            display: block;
+            margin-top: 15px;
+            width: 100%;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .copy-btn:hover {
+            background: linear-gradient(90deg, #00aaff, #00ffff);
+            box-shadow: 0 5px 15px rgba(0, 150, 255, 0.5);
+            transform: translateY(-3px);
+        }
+
+        .copy-btn:active {
+            transform: translateY(1px) translateZ(50px);
+        }
+
+        .copy-btn::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.7);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .copy-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.7;
+            }
+            100% {
+                transform: scale(50, 50);
+                opacity: 0;
+            }
+        }
+
+        .particles {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ffff;
+            animation: particleFloat 10s infinite linear;
+        }
+
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-100px) rotate(360deg); opacity: 0; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 40px 0;
+            margin-top: 60px;
+            color: #80c0ff;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+            border-top: 1px solid rgba(0, 100, 255, 0.3);
+            position: relative;
+        }
+
+        .footer::before {
+            content: '';
+            position: absolute;
+            top: -1px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 200px;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, #00ffff, transparent);
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 1100px) {
+            .server-list-container {
+                grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            }
+        }
+
+        @media (max-width: 900px) {
+            .server-list-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .header-title {
+                font-size: 3.5rem;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main-container {
+                padding: 20px;
+            }
+            
+            .header-title {
+                font-size: 2.8rem;
+            }
+            
+            .server-card {
+                padding: 20px;
+            }
+            
+            .server-name {
+                font-size: 1.6rem;
+            }
+        }
+
+        /* Scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(10, 20, 40, 0.8);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #0080ff, #00aaff);
+            border-radius: 5px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #00aaff, #00ffff);
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom cursor -->
+    <div class="custom-cursor"></div>
+    
+    <!-- Diamond background elements -->
+    <div class="diamond-container">
+        <div class="diamond"></div>
+        <div class="diamond"></div>
+        <div class="diamond"></div>
+    </div>
+    
+    <!-- Dynamic light beam that follows mouse -->
+    <div class="light-beam" id="light-beam"></div>
+    
+    <!-- Floating particles -->
+    <div class="particles" id="particles"></div>
+    
+    <div class="main-container">
+        <header>
+            <div class="diamond-icon"></div>
+            <h1 class="header-title">RAMMERHEAD BROWSER LIST</h1>
+            <p class="header-subtitle">JimmyQrg Info</p>
+            <p style="color: #a0d2ff; max-width: 800px; margin: 0 auto; font-size: 1.1rem; line-height: 1.6;">
+                Public working Rammerhead browser proxy server list for unblocked browsing.
+            </p>
+        </header>
+        
+        <div class="server-list-container" id="server-list">
+            <!-- Server cards will be dynamically inserted here -->
+        </div>
+        
+        <div class="footer">
+            <p>© 2025 JimmyQrg</p>
+        </div>
+    </div>
+
+    <script>
+        // Server data from your list (excluding vote counts)
+        const servers = [
+            { name: "JIMMYQRG.COM", ip: "https://wiki.jimmyqrg.com" },
+            { name: "CLEVERFR.INFLABOT", ip: "https://cleverfr.inflabot.ar/" },
+            { name: "LEARNING.TEAMGAMING", ip: "https://learning.teamgaming.pw/" },
+            { name: "NANA.RAMMER.JDYMQIC", ip: "https://nana.rammer.jdymqic.shop/" },
+            { name: "NANA.RAMMER.NJUEVED", ip: "https://nana.rammer.njueved.shop/" },
+            { name: "ITRSA.IIDK", ip: "https://www.itrsa.iidx.jp/" },
+            { name: "ITRSA-2026", ip: "https://itrsa-2026.handle.ar/" },
+            { name: "SCHOOL", ip: "https://schooll.antropologiayasombro.ar/" }
+        ];
+
+        // Generate server cards
+        const serverListContainer = document.getElementById('server-list');
+        
+        servers.forEach(server => {
+            const serverCard = document.createElement('div');
+            serverCard.className = 'server-card';
+            
+            // Get a random icon for each server
+            const icons = ['fas fa-server', 'fas fa-gamepad', 'fas fa-dice-d20', 'fas fa-cube', 'fas fa-gem', 'fas fa-crown'];
+            const randomIcon = icons[Math.floor(Math.random() * icons.length)];
+            
+            serverCard.innerHTML = `
+                <h3 class="server-name"><i class="${randomIcon}"></i> ${server.name}</h3>
+                <div class="server-ip">${server.ip}</div>
+                <button class="copy-btn" data-ip="${server.ip}">
+                    <i class="fas fa-copy"></i> Copy Url
+                </button>
+            `;
+            
+            serverListContainer.appendChild(serverCard);
+        });
+
+        const cursor = document.querySelector('.custom-cursor');
+        const lightBeam = document.getElementById('light-beam');
+        let mouseX = 0, mouseY = 0;
+        let cursorX = 0, cursorY = 0;
+        let isScrolling = false;
+        let scrollTimer = null;
+        const trailPool = [];
+        const maxTrails = 15;
+        let trailIndex = 0;
+        
+        // Initialize trail pool
+        for (let i = 0; i < maxTrails; i++) {
+            const trail = document.createElement('div');
+            trail.className = 'cursor-trail';
+            trail.style.opacity = '0';
+            document.body.appendChild(trail);
+            trailPool.push(trail);
+        }
+        
+        // Use transform instead of left/top for better performance
+        function updateCursorPosition(x, y) {
+            cursor.style.transform = `translate3d(${x - 10}px, ${y - 10}px, 0)`;
+        }
+        
+        // Throttled mousemove handler
+        let lastUpdate = 0;
+        const updateInterval = 1000 / 60; // 60fps
+        
+        document.addEventListener('mousemove', (e) => {
+            const now = performance.now();
+            if (now - lastUpdate < updateInterval) return;
+            lastUpdate = now;
+            
+            mouseX = e.clientX;
+            mouseY = e.clientY;
+            
+            // Update light beam position
+            if (lightBeam) {
+                lightBeam.style.setProperty('--mouse-x', `${mouseX}px`);
+                lightBeam.style.setProperty('--mouse-y', `${mouseY}px`);
+            }
+            
+            // Create cursor trail (if not scrolling)
+            if (!isScrolling) {
+                createCursorTrail(mouseX, mouseY);
+            }
+        });
+        
+        function createCursorTrail(x, y) {
+            const trail = trailPool[trailIndex];
+            
+            // Reset and position trail
+            trail.style.transform = `translate3d(${x - 3}px, ${y - 3}px, 0)`;
+            trail.style.opacity = '0.5';
+            trail.style.transition = 'opacity 0.3s';
+            
+            // Fade out trail
+            setTimeout(() => {
+                trail.style.opacity = '0';
+            }, 200);
+            
+            // Remove completely after fade out
+            setTimeout(() => {
+                if (trail.parentNode) {
+                    trail.style.transition = 'none';
+                }
+            }, 500);
+            
+            trailIndex = (trailIndex + 1) % maxTrails;
+        }
+        
+        // Smooth cursor movement with scroll handling
+        function animateCursor() {
+            cursorX += (mouseX - cursorX) * 0.15;
+            cursorY += (mouseY - cursorY) * 0.15;
+            
+            // Use transform3d for GPU acceleration
+            updateCursorPosition(cursorX, cursorY);
+            
+            requestAnimationFrame(animateCursor);
+        }
+        
+        // Handle scroll events to prevent trail artifacts
+        window.addEventListener('scroll', () => {
+            isScrolling = true;
+            
+            // Clear any existing timer
+            if (scrollTimer) {
+                clearTimeout(scrollTimer);
+            }
+            
+            // Update cursor position immediately during scroll
+            updateCursorPosition(cursorX, cursorY);
+            
+            // Hide trails during scroll
+            trailPool.forEach(trail => {
+                trail.style.opacity = '0';
+            });
+            
+            // Set timer to re-enable trails after scrolling stops
+            scrollTimer = setTimeout(() => {
+                isScrolling = false;
+                scrollTimer = null;
+            }, 100);
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            // Force cursor position update
+            updateCursorPosition(cursorX, cursorY);
+        });
+        
+        // Handle mouse interactions
+        document.addEventListener('mousedown', () => {
+            cursor.classList.add('click');
+        });
+        
+        document.addEventListener('mouseup', () => {
+            cursor.classList.remove('click');
+        });
+        
+        // Add hover effects for interactive elements
+        document.querySelectorAll('a, button, [data-hover]').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.classList.add('hover');
+            });
+            
+            el.addEventListener('mouseleave', () => {
+                cursor.classList.remove('hover');
+            });
+        });
+        
+        // Initialize cursor position
+        document.addEventListener('DOMContentLoaded', () => {
+            // Set initial cursor position to center
+            mouseX = window.innerWidth / 2;
+            mouseY = window.innerHeight / 2;
+            cursorX = mouseX;
+            cursorY = mouseY;
+            updateCursorPosition(cursorX, cursorY);
+            
+            // Start animation
+            animateCursor();
+            
+            // Disable custom cursor on mobile/touch devices
+            if ('ontouchstart' in window || navigator.maxTouchPoints > 0) {
+                cursor.style.display = 'none';
+                trailPool.forEach(trail => trail.style.display = 'none');
+            }
+        });
+        
+        // Performance optimization: pause updates when page is not visible
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                // Reduce activity when page is not visible
+                trailPool.forEach(trail => {
+                    trail.style.opacity = '0';
+                });
+            }
+        });
+
+        // Create floating particles
+        const particlesContainer = document.getElementById('particles');
+        function createParticles() {
+            for (let i = 0; i < 60; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+                const size = Math.random() * 4 + 1;
+                const duration = Math.random() * 20 + 10;
+                const delay = Math.random() * 20;
+                
+                particle.style.left = `${posX}vw`;
+                particle.style.top = `${posY}vh`;
+                particle.style.width = `${size}px`;
+                particle.style.height = `${size}px`;
+                particle.style.animationDuration = `${duration}s`;
+                particle.style.animationDelay = `${delay}s`;
+                
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+
+        // Copy IP functionality
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('copy-btn') || e.target.parentElement.classList.contains('copy-btn')) {
+                const button = e.target.classList.contains('copy-btn') ? e.target : e.target.parentElement;
+                const ip = button.getAttribute('data-ip');
+                
+                // Copy to clipboard
+                navigator.clipboard.writeText(ip).then(() => {
+                    const originalText = button.innerHTML;
+                    button.innerHTML = '<i class="fas fa-check"></i> Url Copied!';
+                    button.style.background = 'linear-gradient(90deg, #00cc00, #00ff00)';
+                    
+                    // Trigger ripple effect
+                    button.classList.add('clicked');
+                    
+                    setTimeout(() => {
+                        button.innerHTML = originalText;
+                        button.style.background = 'linear-gradient(90deg, #0080ff, #00aaff)';
+                    }, 2000);
+                }).catch(err => {
+                    console.error('Failed to copy Url: ', err);
+                    button.innerHTML = '<i class="fas fa-times"></i> Failed to Copy';
+                    button.style.background = 'linear-gradient(90deg, #ff0000, #ff4000)';
+                    
+                    setTimeout(() => {
+                        button.innerHTML = '<i class="fas fa-copy"></i> Copy Url';
+                        button.style.background = 'linear-gradient(90deg, #0080ff, #00aaff)';
+                    }, 2000);
+                });
+            }
+        });
+
+        // 3D tilt effect on server cards
+        document.querySelectorAll('.server-card').forEach(card => {
+            card.addEventListener('mousemove', (e) => {
+                const cardRect = card.getBoundingClientRect();
+                const cardCenterX = cardRect.left + cardRect.width / 2;
+                const cardCenterY = cardRect.top + cardRect.height / 2;
+                
+                const angleX = (e.clientY - cardCenterY) * 0.02;
+                const angleY = (cardCenterX - e.clientX) * 0.02;
+                
+                card.style.transform = `perspective(1000px) rotateX(${angleX}deg) rotateY(${angleY}deg) translateY(-15px)`;
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.style.transform = 'perspective(1000px) rotateX(0) rotateY(0) translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
